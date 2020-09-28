@@ -1,0 +1,17 @@
+.task-list {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: auto;
+}
+
+.button {
+  padding: 7px;
+  margin: 7px;
+  margin: auto;
+}
+
+button {
+  margin: 7px;
+  padding: 7px;
+}
