@@ -4,6 +4,7 @@ import * as ROUTES from '../../constants/routes';
 import { FirebaseContextProp, withFirebase } from '../firebase';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { SignUpAccount } from './auth.model';
 
 const SignUpPage: React.FC = () => (
   <div>
@@ -15,33 +16,36 @@ const SignUpPage: React.FC = () => (
 const SignUpForm = withRouter(withFirebase(SignUpFormBase));
 
 function SignUpFormBase({firebase, history}: FirebaseContextProp){
-  const [account, setAccount] = useState({
+  const [account, setAccount] = useState<SignUpAccount>({
     username: '',
     email: '',
-    passwordOne: '',
-    passwordTwo: '',
-    error: null,
+    password: '',
+    confirmPassword: '',
+    error: {
+      message: null,
+    },
   });
 
   const {
     username,
     email,
-    passwordOne,
-    passwordTwo,
+    password,
+    confirmPassword,
     error,
   } = account;
 
   const isInvalid =
-    passwordOne !== passwordTwo ||
-    passwordOne === '' ||
+    password !== confirmPassword ||
+    password === '' ||
     email === '' ||
     username === '';
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const { email, passwordOne } = account;
-    firebase.doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
+    const { email, password } = account;
+    firebase.doCreateUserWithEmailAndPassword(email, password)
+      .then(authUser => firebase.user2(authUser.user.uid).add({username, email}))
+      .then(() => {
         setAccount({...account});
         if (history) history.push(ROUTES.HOME);
       })
@@ -59,7 +63,7 @@ function SignUpFormBase({firebase, history}: FirebaseContextProp){
     <form onSubmit={onSubmit}>
       <TextField
         name="username"
-        value={account.username}
+        value={username}
         onChange={onChange}
         type="text"
         variant="outlined"
@@ -67,23 +71,23 @@ function SignUpFormBase({firebase, history}: FirebaseContextProp){
       />
       <TextField
         name="email"
-        value={account.email}
+        value={email}
         onChange={onChange}
         type="text"
         variant="outlined"
         label="Email Address"
       />
       <TextField
-        name="passwordOne"
-        value={account.passwordOne}
+        name="password"
+        value={password}
         onChange={onChange}
         type="password"
         variant="outlined"
         label="Password"
       />
       <TextField
-        name="passwordTwo"
-        value={account.passwordTwo}
+        name="confirmPassword"
+        value={confirmPassword}
         onChange={onChange}
         type="password"
         placeholder="Confirm Password"
@@ -91,7 +95,7 @@ function SignUpFormBase({firebase, history}: FirebaseContextProp){
         label="Confirm Password"
       />
       <Button variant="contained" color="primary" type="submit" disabled={isInvalid}>Sign Up</Button>
-      {account.error && <p>{(account.error as any).message}</p>}
+      {error?.message && <p>{error.message}</p>}
     </form>
   );
 }

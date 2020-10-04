@@ -4,6 +4,7 @@ import * as ROUTES from '../../constants/routes';
 import { FirebaseContextProp, withFirebase } from '../firebase';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { SignInAccount } from './auth.model';
 
 const SignInPage: React.FC = () => (
   <div>
@@ -15,11 +16,13 @@ const SignInForm = withRouter(withFirebase(SignInFormBase));
 
 function SignInFormBase({firebase, history}: FirebaseContextProp) {
   console.log(this)
-  const [account, setAccount] = useState({
+  const [account, setAccount] = useState<SignInAccount>({
     username: '',
     email: '',
     password: '',
-    error: null,
+    error: {
+      message: ''
+    },
   });
   const {
     email,
