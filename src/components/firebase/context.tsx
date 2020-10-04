@@ -8,7 +8,7 @@ export interface ContextProp {
   history?: any,
 }
 
-export const withFirebase = (Component: React.FC<ContextProp>) => (props: any) => (
+export const withFirebase = (Component: React.FC<ContextProp & any>) => (props: any) => (
   <FirebaseContext.Consumer>
     {(firebase: Firebase) => <Component {...props} firebase={firebase} />}
   </FirebaseContext.Consumer>

@@ -1,5 +1,5 @@
-import AuthUserContext, { ContextProp } from './context';
+import AuthUserContext, { UserContextProp } from './context';
 
 export { AuthUserContext };
 
-export declare type AuthUserContextProp = ContextProp;
+export declare type AuthUserContextProp = UserContextProp;

@@ -2,23 +2,25 @@ import { User } from 'firebase';
 import React, { useEffect, useState } from 'react';
 import { FirebaseContextProp } from '../firebase';
 
-export interface ContextProp {
+export interface UserContextProp {
   authUser: User | null | undefined
 }
 
-const AuthUserContext = React.createContext({} as ContextProp);
+const AuthUserContext = React.createContext({} as UserContextProp);
 
-export const withAuthentication = (Component: React.FC<ContextProp>) => ({firebase}: FirebaseContextProp) => {
+export const withAuthentication = (Component: React.FC<UserContextProp & any>) => ({firebase}: FirebaseContextProp) => {
 
-  const [user, setUser] = useState<ContextProp>();
+  const [user, setUser] = useState<UserContextProp>();
+
+  const handleAuthStateChanged = (authUser: User | null) => setUser({authUser});
 
   useEffect(() => {
-    const listener = firebase.auth.onAuthStateChanged((authUser: User | null) => setUser({authUser}));
+    const listener = firebase.auth.onAuthStateChanged(handleAuthStateChanged);
     return listener();
-  })
+  }, [firebase.auth])
 
   return (
-    <Component authUser={user?.authUser}/>
+    <Component authUser={user?.authUser} firebase={firebase}/>
   );
 }
 export default AuthUserContext;
