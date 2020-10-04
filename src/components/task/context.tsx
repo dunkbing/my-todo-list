@@ -28,3 +28,10 @@ const TaskProvider: React.FC<Props> = ({children}: Props) => {
 
 export default TaskProvider;
 export const useTasks = () => useContext(TaskContext);
+export const withTaskContext = (Component: React.FC<any>) => (props: any) => {
+  return (
+    <TaskContext.Consumer>
+      {() => <Component {...props} />}
+    </TaskContext.Consumer>
+  );
+};
